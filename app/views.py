@@ -1,18 +1,20 @@
 # capa de vista/presentación
 
 from django.shortcuts import redirect, render
+
+from app.layers.transport import transport
 from .layers.services import services
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
 
-def index_page(request):
+def index_page(request):    
     return render(request, 'index.html')
 
 # esta función obtiene 2 listados que corresponden a las imágenes de la API y los favoritos del usuario, y los usa para dibujar el correspondiente template.
 # si el opcional de favoritos no está desarrollado, devuelve un listado vacío.
 def home(request):
-    images = []
-    favourite_list = []
+    images = services.getAllImages(None)
+    favourite_list = services.getAllFavourites(request)
 
     return render(request, 'home.html', { 'images': images, 'favourite_list': favourite_list })
 
@@ -22,7 +24,8 @@ def search(request):
     # si el texto ingresado no es vacío, trae las imágenes y favoritos desde services.py,
     # y luego renderiza el template (similar a home).
     if (search_msg != ''):
-        pass
+        all_images = services.getAllImages(search_msg)
+        return render(request, 'home.html', {'images': all_images})
     else:
         return redirect('home')
 
