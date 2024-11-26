@@ -6,6 +6,7 @@ from app.layers.transport import transport
 from .layers.services import services
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import logout
+from django.core.paginator import Paginator
 
 def index_page(request):    
     return render(request, 'index.html')
@@ -14,18 +15,26 @@ def index_page(request):
 # si el opcional de favoritos no está desarrollado, devuelve un listado vacío.
 def home(request):
     images = services.getAllImages(None)
+    paginator = Paginator(images, 9)  # Cambia el número 9 por la cantidad de resultados por página
+    page_number = request.GET.get('page', 1)  # Obtén el número de página desde la URL
+    page_obj = paginator.get_page(page_number)  # Página actual
+    
     favourite_list = services.getAllFavourites(request)
 
-    return render(request, 'home.html', { 'images': images, 'favourite_list': favourite_list })
+    return render(request, 'home.html', { 'images': page_obj, 'paginator': paginator, 'favourite_list': favourite_list })
 
 def search(request):
-    search_msg = request.POST.get('query', '')
+    search_msg = request.POST.get('query', '') or request.GET.get('query', '')
 
     # si el texto ingresado no es vacío, trae las imágenes y favoritos desde services.py,
     # y luego renderiza el template (similar a home).
     if (search_msg != ''):
         all_images = services.getAllImages(search_msg)
-        return render(request, 'home.html', {'images': all_images})
+        paginator = Paginator(all_images, 9)
+        page_number = request.GET.get('page', 1)
+        page_obj = paginator.get_page(page_number)
+        
+        return render(request, 'home.html', {'images': page_obj,'paginator': paginator,'search_msg': search_msg})
     else:
         return redirect('home')
 

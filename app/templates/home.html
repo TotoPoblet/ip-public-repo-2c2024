@@ -3,26 +3,40 @@
     <h1 class="text-center">Buscador Rick & Morty</h1>
 
     <div class="d-flex justify-content-end" style="margin-bottom: 1%; margin-right: 2rem;">
-        <!-- Selector de página -->
-        <nav aria-label="...">
+        <nav aria-label="Paginación">
             <ul class="pagination">
-                <li class="page-item disabled">
-                    <a class="page-link">⬅️</a>
-                </li>
-                <li class="page-item active" aria-current="page">
-                    <a class="page-link" href="#">1</a>
-                </li>
-                <li class="page-item">
-                    <a class="page-link" href="#">2</a>
-                </li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">➡️</a>
-                </li>
+                <!-- Página anterior -->
+                {% if images.has_previous %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ images.previous_page_number }}&query={{ search_msg }}">⬅️</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">⬅️</a>
+                    </li>
+                {% endif %}
+    
+                <!-- Números de página -->
+                {% for page_num in paginator.page_range %}
+                    <li class="page-item {% if page_num == images.number %}active{% endif %}">
+                        <a class="page-link" href="?page={{ page_num }}&query={{ search_msg }}">{{ page_num }}</a>
+                    </li>
+                {% endfor %}
+    
+                <!-- Página siguiente -->
+                {% if images.has_next %}
+                    <li class="page-item">
+                        <a class="page-link" href="?page={{ images.next_page_number }}&query={{ search_msg }}">➡️</a>
+                    </li>
+                {% else %}
+                    <li class="page-item disabled">
+                        <a class="page-link">➡️</a>
+                    </li>
+                {% endif %}
             </ul>
         </nav>
     </div>
-
+    
     <div class="d-flex justify-content-center" style="margin-bottom: 1%">
         <!-- Buscador del sitio -->
         <form class="d-flex" action="{% url 'buscar' %}" method="POST">
