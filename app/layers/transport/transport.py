@@ -30,3 +30,33 @@ def getAllImages(input=None):
             pass
 
     return json_collection
+
+def getAllImagesHome(url):  # Devuelve los resultados de la página inicial.
+    json_response = requests.get(url).json()
+
+    # Si ocurre un error, devuelve una lista vacía.
+    if 'error' in json_response:
+        print("[transport.py]: la búsqueda no arrojó resultados.")
+        return []
+
+    return json_response.get('results', [])
+
+
+def getAllImagesFiltered(input):  #Devuelve todos los resultados para un filtro específico.
+    url = config.DEFAULT_REST_API_SEARCH + input
+    all_results = []
+
+    while url:
+        response = requests.get(url).json()
+
+        # Si hay un error, rompe el bucle.
+        if 'error' in response:
+            print("[transport.py]: la búsqueda no arrojó resultados.")
+            break
+
+        all_results.extend(response.get('results', []))
+        url = response.get('info', {}).get('next')  # Actualiza la URL para la siguiente página.
+
+    return all_results
+
+

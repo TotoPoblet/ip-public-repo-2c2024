@@ -1,5 +1,6 @@
 # capa de servicio/lógica de negocio
 
+from app.config import config
 from app.layers.transport import transport
 from ..persistence import repositories
 from ..utilities import translator
@@ -7,11 +8,13 @@ from django.contrib.auth import get_user
 
 def getAllImages(input=None):
     # obtiene un listado de datos "crudos" desde la API, usando a transport.py.
-    json_collection = transport.getAllImages(input)
+    if input:
+        json_collection = transport.getAllImagesFiltered(input)  #Si hay input, usa la funcion que obtiene TODOS los personajes
+    else:
+        json_collection = transport.getAllImagesHome(config.DEFAULT_REST_API_URL) #Si no hay input, solo devuelve los primeros 20 que da la API
     
     # recorre cada dato crudo de la colección anterior, lo convierte en una Card y lo agrega a images.
     images = []
-    
     for object in json_collection:
         card = translator.fromRequestIntoCard(object)
         images.append(card)
