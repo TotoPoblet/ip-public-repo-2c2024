@@ -2,9 +2,80 @@
 
 {% block content %}
 <main>
-    <h1 class="text-center">Buscador Rick & Morty</h1>
+    <div class="logo-container">
+        <a href="#">
+            <img class="logo" src="../static/img/logo.png" alt="Rick and Morty">
+        </a>
+    </div>
 
-    <div class="d-flex justify-content-end" style="margin-bottom: 1%; margin-right: 2rem;">
+    <div class="d-flex justify-content-center" style="margin-bottom: 30px">
+        <!-- Buscador del sitio -->
+        <form class="d-flex" action="{% url 'buscar' %}" method="GET" style="position: relative; width: 30%">
+            <input 
+                class="form-control search-input" 
+                type="search" 
+                name="query" 
+                placeholder="Busca un personaje..." 
+                aria-label="Search" 
+                value="{{ search_msg }}"
+            >
+            <button class="search-button" type="submit">
+                <i class="fas fa-search"></i>
+            </button>
+        </form>
+    </div>
+    <div class="container">
+        <div class="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
+            {% if images|length == 0 %}
+            <h2 class="text-center">La búsqueda no arrojó resultados...</h2>
+            {% else %} 
+            {% for img in images %}
+            <div class="col">
+                <div class="card h-100 border-{{ img.status|lower }}">
+                    <img src="{{ img.url }}" class="card-img-top" alt="imagen">
+                    <div class="card-body text-center">
+                        <h3 class="card-title">{{ img.name }}</h3>
+                        <p class="card-text">
+                            <strong>
+                                {% if img.status == 'Alive' %} 🟢 {{ img.status }} 
+                                {% elif img.status == 'Dead' %} 🔴 {{ img.status }} 
+                                {% else %} 🟠 {{ img.status }} 
+                                {% endif %}
+                            </strong>
+                        </p>
+                        <p class="card-text"><small class="text-body-secondary">Última ubicación: {{ img.last_location }}</small></p>
+                        <p class="card-text"><small class="text-body-secondary">Episodio inicial: {{ img.first_seen }}</small></p>
+                    </div>
+
+                    {% if request.user.is_authenticated %}
+                    <div class="card-footer text-center">
+                        <form method="post" action="{% url 'agregar-favorito' %}">
+                            {% csrf_token %}
+                            <input type="hidden" name="name" value="{{ img.name }}">
+                            <input type="hidden" name="url" value="{{ img.url }}">
+                            <input type="hidden" name="status" value="{{ img.status }}">
+                            <input type="hidden" name="last_location" value="{{ img.last_location }}">
+                            <input type="hidden" name="first_seen" value="{{ img.first_seen }}"> 
+                            <input type="hidden" name="redirect_url" id="redirect_url" value="{{ request.build_absolute_uri }}">
+                            {% if img in favourite_list %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="color:white" disabled>✔️ Ya está en favoritos</button> 
+                            {% else %}
+                            <button type="submit" class="btn btn-primary btn-sm" style="color:white">❤️ Añadir a favoritos</button> 
+                            {% endif %}
+                        </form>
+                        <script> 
+                            document.getElementById('redirect_url').value = window.location.href; //Script que guarda la URL actual al momento de guardar un fav 
+                        </script>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %} 
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="d-flex justify-content-center" style="padding: 20px;">
         <nav aria-label="Paginación">
             <ul class="pagination">
                 <!-- Página anterior -->
@@ -37,69 +108,6 @@
                 {% endif %}
             </ul>
         </nav>
-    </div>
-    
-    <div class="d-flex justify-content-center" style="margin-bottom: 1%">
-        <!-- Buscador del sitio -->
-        <form class="d-flex" action="{% url 'buscar' %}" method="GET">
-            <input class="form-control me-2" type="search" name="query" placeholder="Escribí una palabra" aria-label="Search" value="{{ search_msg }}">
-            <button class="btn btn-outline-success" type="submit">Buscar</button>
-        </form>
-    </div>
-
-    <div class="row row-cols-1 row-cols-md-3 g-4">
-        {% if images|length == 0 %}
-        <h2 class="text-center">La búsqueda no arrojó resultados...</h2>
-        {% else %} 
-        {% for img in images %}
-        <div class="col">
-            <div class="card mb-3 ms-2 border-{{ img.status|lower }}" style="max-width: 540px;">
-                <div class="row g-0">
-                    <div class="col-md-4">
-                        <img src="{{ img.url }}" class="card-img-top" alt="imagen">
-                    </div>
-
-                    <div class="col-md-8">
-                        <div class="card-body">
-                            <h3 class="card-title">{{ img.name }}</h3>
-                            <p class="card-text">
-                                <strong>
-                                    {% if img.status == 'Alive' %} 🟢 {{ img.status }} 
-                                    {% elif img.status == 'Dead' %} 🔴 {{ img.status }} 
-                                    {% else %} 🟠 {{ img.status }} 
-                                    {% endif %}
-                                </strong>
-                            </p>
-                            <p class="card-text"><small class="text-body-secondary">Última ubicación: {{ img.last_location }}</small></p>
-                            <p class="card-text"><small class="text-body-secondary">Episodio inicial: {{ img.first_seen }}</small></p>
-                        </div>
-                        {% if request.user.is_authenticated %}
-                        <div class="card-footer text-center">
-                            <form method="post" action="{% url 'agregar-favorito' %}">
-                                {% csrf_token %}
-                                <input type="hidden" name="name" value="{{ img.name }}">
-                                <input type="hidden" name="url" value="{{ img.url }}">
-                                <input type="hidden" name="status" value="{{ img.status }}">
-                                <input type="hidden" name="last_location" value="{{ img.last_location }}">
-                                <input type="hidden" name="first_seen" value="{{ img.first_seen }}"> 
-                                <input type="hidden" name="redirect_url" id="redirect_url" value="{{ request.build_absolute_uri }}">
-                                {% if img in favourite_list %}
-                                <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white" disabled>✔️ Ya está en favoritos</button> 
-                                {% else %}
-                                <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white">❤️ Añadir a favoritos</button> 
-                                {% endif %}
-                            </form>
-                            <script> 
-                                document.getElementById('redirect_url').value = window.location.href; //Script que guarda la URL actual al momento de guardar un fav 
-                            </script>
-                        </div>
-                        {% endif %}
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %} 
-        {% endif %}
     </div>
 </main>
 

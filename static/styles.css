@@ -1,7 +1,92 @@
 body {
     color: #566787;
-    background: #f5f5f5;
+    background-image: url(img/3.c14a633a.jpg);
     font-family: 'Roboto', sans-serif;
+}
+
+.logo-container {
+    display: flex;
+    justify-content: center;
+}
+
+.logo {
+    width: 500px;
+    padding-bottom: 40px;
+}
+
+.search-input {
+    border: 1px solid #40b6cb38;
+    border-radius: 25px;
+    padding: 10px 15px;
+    width: 100%;
+    color: rgba(255, 255, 255, 0.692);
+    background-color: #000000a4; 
+    box-shadow: 0px 1px 4px #40b5cb;
+    font-size: 16px;
+}
+
+
+.search-button {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    font-size: 18px;
+    color: rgba(255, 255, 255, 0.5);
+    cursor: pointer;
+}
+
+.search-button:hover {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.border-alive {
+    border: 1px solid green;
+    box-shadow: 1px 1px 4px #40b5cb;;
+}
+
+.border-dead {
+    border: 1px solid red;
+    box-shadow: 1px 1px 4px red;
+}
+
+.border-unknown {
+    border: 1px solid orange;
+    box-shadow: 1px 1px 4px orange;
+}
+
+.container {
+    max-width: 1000px; 
+    margin: 0 auto; 
+}
+
+.card {
+    border-radius: 15px; 
+    background-color: #000000a4; 
+    color: rgba(245, 245, 245, 0.726);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card-img-top {
+    width: 100%; 
+    height: auto; 
+}
+
+.card-title {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.card-footer {
+    padding-bottom: 15px;
+}  
+
+.card:hover{
+    transform: scale(1.05); 
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
 
 .table-responsive {
@@ -24,7 +109,7 @@ body {
 .table-title h2 {
     margin: 8px 0 0;
     font-size: 22px;
-}
+} 
 
 .search-box {
     position: relative;
@@ -109,7 +194,6 @@ table.table td i {
     color: #999;
     margin: 0 2px;
     line-height: 30px;
-    border-radius: 30px !important;
     text-align: center;
     padding: 0;
 }
@@ -119,11 +203,11 @@ table.table td i {
 }
 
 .pagination li.active a {
-    background: #03A9F4;
+    background: #40b6cb38;
 }
 
 .pagination li.active a:hover {
-    background: #0397d6;
+    background: #40b6cb38;
 }
 
 .pagination li.disabled i {
@@ -139,18 +223,6 @@ table.table td i {
     float: left;
     margin-top: 6px;
     font-size: 95%;
-}
-
-.border-alive {
-    border: 1px solid green;
-}
-
-.border-dead {
-    border: 1px solid red;
-}
-
-.border-unknown {
-    border: 1px solid orange;
 }
 
 .loading-overlay {
