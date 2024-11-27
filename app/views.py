@@ -24,14 +24,14 @@ def home(request):
     return render(request, 'home.html', { 'images': page_obj, 'paginator': paginator, 'favourite_list': favourite_list })
 
 def search(request):
-    search_msg = request.POST.get('query', '') or request.GET.get('query', '')
+    search_msg = request.GET.get('query', '')
+    page_number = request.GET.get('page', 1)
 
     # si el texto ingresado no es vacío, trae las imágenes y favoritos desde services.py,
     # y luego renderiza el template (similar a home).
     if (search_msg != ''):
         all_images = services.getAllImages(search_msg)
         paginator = Paginator(all_images, 12)
-        page_number = request.GET.get('page', 1)
         page_obj = paginator.get_page(page_number)
         
         return render(request, 'home.html', {'images': page_obj,'paginator': paginator,'search_msg': search_msg})
@@ -49,7 +49,11 @@ def getAllFavouritesByUser(request):
 def saveFavourite(request):
     if request.method == 'POST':
         services.saveFavourite(request)
+        redirect_url = request.POST.get('redirect_url', '/')
+        if redirect_url:
+            return redirect(redirect_url) 
     return redirect('home')
+
 
 @login_required
 def deleteFavourite(request):

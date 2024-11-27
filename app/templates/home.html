@@ -41,9 +41,8 @@
     
     <div class="d-flex justify-content-center" style="margin-bottom: 1%">
         <!-- Buscador del sitio -->
-        <form class="d-flex" action="{% url 'buscar' %}" method="POST">
-            {% csrf_token %}
-            <input class="form-control me-2" type="search" name="query" placeholder="Escribí una palabra" aria-label="Search">
+        <form class="d-flex" action="{% url 'buscar' %}" method="GET">
+            <input class="form-control me-2" type="search" name="query" placeholder="Escribí una palabra" aria-label="Search" value="{{ search_msg }}">
             <button class="btn btn-outline-success" type="submit">Buscar</button>
         </form>
     </div>
@@ -83,12 +82,16 @@
                                 <input type="hidden" name="status" value="{{ img.status }}">
                                 <input type="hidden" name="last_location" value="{{ img.last_location }}">
                                 <input type="hidden" name="first_seen" value="{{ img.first_seen }}"> 
+                                <input type="hidden" name="redirect_url" id="redirect_url" value="{{ request.build_absolute_uri }}">
                                 {% if img in favourite_list %}
                                 <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white" disabled>✔️ Ya está en favoritos</button> 
                                 {% else %}
                                 <button type="submit" class="btn btn-primary btn-sm float-left" style="color:white">❤️ Añadir a favoritos</button> 
                                 {% endif %}
                             </form>
+                            <script> 
+                                document.getElementById('redirect_url').value = window.location.href; //Script que guarda la URL actual al momento de guardar un fav 
+                            </script>
                         </div>
                         {% endif %}
                     </div>
