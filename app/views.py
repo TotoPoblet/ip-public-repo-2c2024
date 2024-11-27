@@ -33,8 +33,9 @@ def search(request):
         all_images = services.getAllImages(search_msg)
         paginator = Paginator(all_images, 12)
         page_obj = paginator.get_page(page_number)
+        favourite_list = services.getAllFavourites(request)
         
-        return render(request, 'home.html', {'images': page_obj,'paginator': paginator,'search_msg': search_msg})
+        return render(request, 'home.html', {'images': page_obj,'paginator': paginator,'search_msg': search_msg, 'favourite_list': favourite_list})
     else:
         return redirect('home')
 
